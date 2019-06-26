@@ -1,33 +1,99 @@
 import React, { Component } from 'react';
 import { Board } from './Board';
-import { Board as IBoard } from '@k-okina/minimax_ttt';
+import { Board as IBoard } from 'minimax_ttt';
+
+class PromiseMe {
+  private _initialized = false
+  queue = [] as (() => any)[]
+
+  setInitialized() {
+    this._initialized = true
+    this.queue.forEach(func => func());
+  }
+
+  pushJob(func: () => any) {
+    this.queue.push(func);
+    if (this._initialized) {
+      this.queue.forEach(func => func());
+    }
+  }
+}
+
+const promiseMe = new PromiseMe()
+let alreadyAsked = false
+
+let get_next_best_board: (js_objects: IBoard) => IBoard
+import('@k-okina/minimax_ttt/minimax_ttt')
+  .then(js => {
+    get_next_best_board = js.get_next_best_board;
+    promiseMe.setInitialized()
+  })
 
 type GameState = {
+  isStartByCpu: boolean,
   stepNumber: number,
   history: { board: IBoard }[],
   xIsNext: boolean,
 }
 
+const initialState = () => ({
+  stepNumber: 0,
+  history: [{
+    board: Array(9).fill(0)
+  }],
+  xIsNext: true
+} as GameState)
+
 export class Game extends Component<{}, GameState> {
-  state = {
-    stepNumber: 0,
-    history: [{
-      board: Array(9).fill(0)
-    }],
-    xIsNext: true
-  } as GameState
+  state = initialState()
+
+  componentDidMount() {
+    setTimeout(() => promiseMe.pushJob(() => !window.confirm('Do you want get first hand?') && this.inputByCpu()))
+  }
+
+  getLatestHistory() {
+    return this.state.history.slice(0, this.state.stepNumber + 1)
+  }
+
+  getLatestBoard(): IBoard {
+    return this.getLatestHistory()[this.state.stepNumber].board.slice() as IBoard
+  }
+
+  componentDidUpdate() {
+    if (calculateWinner(this.getLatestBoard())) {
+      alreadyAsked = true
+      setTimeout(() => {
+        if (window.confirm('Do you want to play again?')) {
+          alreadyAsked = false
+          this.setState(initialState());
+        }
+      }, 1000)
+    }
+  }
 
   handleClick(i: number) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const board = history[this.state.stepNumber].board.slice() as IBoard;
+    const history = this.getLatestHistory();
+    const board = this.getLatestBoard();
     if (calculateWinner(board) || board[i]) {
       return;
     }
-    board[i] = this.state.xIsNext ? 2 : 1;
+    board[i] = this.state.xIsNext ? 1 : 2;
     this.setState({
       stepNumber: history.length,
       history: history.concat([{
         board: board
+      }]),
+      xIsNext: !this.state.xIsNext,
+    });
+    setTimeout(() => this.inputByCpu())
+  }
+
+  inputByCpu() {
+    const history = this.getLatestHistory();
+    this.setState({
+      stepNumber: history.length,
+      history: history.concat([{
+        board: get_next_best_board(this.getLatestBoard())
       }]),
       xIsNext: !this.state.xIsNext,
     });
@@ -92,8 +158,11 @@ function calculateWinner(board: IBoard) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
+      return board[a] === 1 ? 'O' : 'X';
     }
+  }
+  if (board.find(cell => cell === 0) === undefined) {
+    return 'Nothing'
   }
   return null;
 }

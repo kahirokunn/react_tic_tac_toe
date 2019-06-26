@@ -1122,11 +1122,6 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
-"@k-okina/minimax_ttt@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@k-okina/minimax_ttt/-/minimax_ttt-0.1.1.tgz#477badd735a4ec071212f50fda4db617ae95ec4a"
-  integrity sha512-C34XqAZXGm9rFSSiB9i4c+YFguoPNT8HGoEvnqG2+TVSXhxprxfaI8fJAG1RkfANZL5U6X0ASD+jvZ57+kDeUw==
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6187,6 +6182,11 @@ minimatch@3.0.4, minimatch@^3.0.4:
   integrity sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
   dependencies:
     brace-expansion "^1.1.7"
+
+minimax_ttt@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/minimax_ttt/-/minimax_ttt-0.1.6.tgz#bf44c669d96bded035d75ffbeb7f019f1e37676d"
+  integrity sha512-8xtzpRG1vOB7HmUBaP3F/aEaThhN1CuK/BCCeh/KJHMlKkFClidcge9qDSB6AVZyO1AffkuEhFjkThC4dH2asw==
 
 minimist@0.0.8:
   version "0.0.8"
