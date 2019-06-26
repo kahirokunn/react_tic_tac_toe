@@ -2,6 +2,8 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import('@k-okina/minimax_ttt/minimax_ttt').then(js => console.log(js.get_next_best_board([0, 0, 0, 0, 0, 0, 0, 0, 0])))
+
 const App: React.FC = () => {
   return (
     <div className="App">
