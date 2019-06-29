@@ -9,18 +9,20 @@ class PromiseMe {
   setInitialized() {
     this._initialized = true
     this.queue.forEach(func => func());
+    this.queue = []
   }
 
   pushJob(func: () => any) {
     this.queue.push(func);
     if (this._initialized) {
       this.queue.forEach(func => func());
+      this.queue = []
     }
   }
 }
 
+let is_already_asked = false
 const promiseMe = new PromiseMe()
-let alreadyAsked = false
 
 let get_next_best_board: (js_objects: IBoard) => IBoard
 import('@k-okina/minimax_ttt/minimax_ttt')
@@ -60,12 +62,15 @@ export class Game extends Component<{}, GameState> {
   }
 
   componentDidUpdate() {
-    if (calculateWinner(this.getLatestBoard())) {
-      alreadyAsked = true
+    if (!is_already_asked && calculateWinner(this.getLatestBoard())) {
+      is_already_asked = true
       setTimeout(() => {
         if (window.confirm('Do you want to play again?')) {
-          alreadyAsked = false
+          is_already_asked = false
           this.setState(initialState());
+          if (!window.confirm('Do you want get first hand?')) {
+            this.inputByCpu()
+          }
         }
       }, 1000)
     }
