@@ -25,7 +25,7 @@ let is_already_asked = false
 const promiseMe = new PromiseMe()
 
 let get_next_best_board: (js_objects: IBoard) => IBoard
-import('@k-okina/minimax_ttt/minimax_ttt')
+import('minimax_ttt')
   .then(js => {
     get_next_best_board = js.get_next_best_board;
     promiseMe.setInitialized()
